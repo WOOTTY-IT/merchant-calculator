@@ -23,13 +23,19 @@ Merchant Calculator PWA — เครื่องคิดเงินสำห�
 - `node scripts/verify.mjs` → **all checks passed (6/6)** — ดูหัวข้อ 3
 - HTTP smoke test → 14/14 assets 200
 
-## 3. Workflow อัตโนมัติ (สร้างรอบนี้)
+## 3. Workflow อัตโนมัติ + Deployment
 
 | คำสั่ง | ตรวจอะไร |
 |---|---|
 | `node --test` | unit + UI wiring tests |
 | `node scripts/verify.mjs` | gate รวม 6 ข้อ: tests · i18n parity · data-i18n coverage · ขนาดไฟล์ ≤200 · import graph · PWA assets+ไอคอน ≥2KB |
 | `node scripts/gen-icons.mjs` | generate ไอคอน PNG ใหม่ (ไม่มี dependency) |
+
+**Live (GitHub Pages, 2026-10-13):** https://wootty-it.github.io/merchant-calculator/
+- repo: `https://github.com/WOOTTY-IT/merchant-calculator` (public) · branch `main` · **push = deploy อัตโนมัติ** (~30 วิ) · HTTPS+CDN ฟรี
+- ตรวจแล้ว: HTTP 200 ทุก asset, content-type ถูกต้อง (js = application/javascript) — ติดตั้ง PWA + offline บนมือถือได้จริง
+- **ก่อนแก้ asset ใดๆ ต้อง bump `CACHE` ใน `sw.js`** ไม่งั้นมือถือจะโหลดเวอร์ชันเก่าจาก cache (ตอนนี้ v3)
+- ทดสอบในเครื่อง: `node scripts/serve.cjs` ชั่วคราวที่ `C:\Users\COM\AppData\Local\Temp\opencode\serve.cjs` (bind 0.0.0.0:8391) · firewall rule TCP 8391 สร้างแล้ว (ต้องกด UAC ครั้งเดียว)
 
 - ไอคอนเดิมเป็น placeholder (587B/2.2KB) → **แทนที่แล้ว** ด้วยไอคอน generate (4KB/26KB) หน้าตา: พื้นดำมุมโค้ง + จอ + ตารางปุ่ม 3×3 มีปุ่มเขียว (เทสต์ผ่าน `≥2KB` ใน verify)
 - แก้ asset ไฟล์ใด → bump `CACHE` ใน `sw.js` ทุกครั้ง (ตอนนี้ v3)
@@ -53,8 +59,8 @@ Merchant Calculator PWA — เครื่องคิดเงินสำห�
 
 | # | งาน | ผู้รับผิดชอบ | สถานะ |
 |---|---|---|---|
-| 7 | พิสูจน์จริงในเบราว์เซอร์: offline reload (DevTools→offline→refresh), สลับภาษาหลัง reload, persistence ของ tape | tester/ผู้ใช้ | ❌ ยังไม่ได้พิสูจน์ (เทสต์ level ผ่านแล้วใน `js/app.test.js`) |
-| 8 | init git | ผู้ใช้ | ❌ ยังไม่ทำ (ไม่ commit โดยไม่ได้รับคำสั่ง) |
+| 7 | พิสูจน์จริงในมือถือ: ติดตั้ง PWA, offline reload (ปิดเน็ต→refresh), สลับภาษาหลัง reload, persistence ของ tape | ผู้ใช้ | ❌ ยังไม่ได้พิสูจน์บนอุปกรณ์จริง (level โค้ดผ่านแล้วใน `js/app.test.js` + asset 200 ทุกตัว) |
+| 8 | init git | ~~ผู้ใช้~~ | ✅ ทำแล้ว 2026-10-13 (commit `0994148` + .nojekyll) |
 | 10 | สร้างไฟล์ agent `coder`/`tester`/`reviewer` พร้อมโมเดลปัจจุบัน | ผู้ใช้+lead-dev | ❌ |
 | 12 | พิสูจน์กลไก "ความจำ"/โทเคน ของโมเดลผ่าน bridge (หัวข้อ 6) | tester | ❌ |
 | - | ไอคอนเวอร์ชันออกแบบจริง (ถ้าไม่ชอบแบบ generate) | ผู้ใช้ | เสนอ |
